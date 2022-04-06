@@ -50,12 +50,12 @@ string ariel::Notebook:: read(int page, int row, int column,ariel::Direction dir
 }
 
 void ariel::Notebook::write(int page, int row, int column,ariel::Direction direction, string str){
-    const int len_max = 100;
+    const int max_length = 100;
     const int min = 32;
     const int max = 125;
     int len_word = str.length();
     //wrong arguments
-    if (column < 0 || column > len_max-1|| row < 0 || page < 0 || len_word < 0) {
+    if (column < 0 || column > max_length-1|| row < 0 || page < 0 || len_word < 0) {
         throw invalid_argument("negative variables");
     }
     //the char is illeagal
@@ -65,7 +65,7 @@ void ariel::Notebook::write(int page, int row, int column,ariel::Direction direc
         }
     }
     if (direction == Direction::Horizontal){
-        if(len_word + column > len_max){
+        if(len_word + column > max_length){
             throw invalid_argument("out of line-length");
         }
         for(int i= column ; i < (column + len_word); i++){
@@ -75,14 +75,16 @@ void ariel::Notebook::write(int page, int row, int column,ariel::Direction direc
             if(_maping[page][row][i] >= min && _maping[page][row][i] <= max){
                 if(_maping[page][row][i] == '_'){
                     // _maping[page][row][i] = str[(unsigned int)(i-column)];
-                    _maping.insert((pair<int,char>(i,str[(unsigned int)(i-column)])));
+                    int spot = i-column;
+                    _maping.insert((pair<int,char>(i,str[(unsigned int)(spot)])));
                 }
                 else{
                     throw invalid_argument("we have allready write");
                 }
             }
             else{
-                _maping[page][row][i] = str[(unsigned int)(i-column)];
+                int spot = i-column;
+                _maping[page][row][i] = str[(unsigned int)(spot)];
             }
         }
     }
@@ -95,15 +97,16 @@ void ariel::Notebook::write(int page, int row, int column,ariel::Direction direc
             }
             if(_maping[page][i][column] >= min && _maping[page][i][column] <= max){
                 if(_maping[page][i][column] == '_'){
-                    // _maping[page][i][column] = str[(unsigned int)(i-row)];
-                    _maping.insert((pair<int,char>(i,str[(unsigned int)(i-column)])));
+                    int spot = i-column;
+                    _maping.insert((pair<int,char>(i,str[(unsigned int)(spot)])));
                 }
                 else{
                     throw runtime_error("we have allready write");
                 }
             }
             else{
-                _maping[page][i][column] = str[(unsigned int)(i-row)];
+                int spot = i-row;
+                _maping[page][i][column] = str[(unsigned int)(spot)];
             }
         }
     }
@@ -125,13 +128,20 @@ void ariel::Notebook:: erase(int page, int row, int column,ariel::Direction dire
         if(length + column > len_max){
             throw runtime_error("out of line-length");
         }
-        for(int i= column ; i < (column + length); i++){
+        int i = column;
+        while (i<(column + length))
+        {
             _maping[page][row][i] = '~';
+            i++;
         }
+        
     }
     else{
-        for(int i= row ; i < (row + length); i++){
+        int i = row;
+        while (i<(row + length))
+        {
             _maping[page][i][column] = '~';
+            i++;
         }
     }
 
