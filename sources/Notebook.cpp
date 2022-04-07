@@ -15,19 +15,22 @@ string ariel::Notebook:: read(int page, int row, int column,ariel::Direction dir
     if (column < 0 || column > len_max-1|| row < 0 || page < 0 || length < 0) {
         throw invalid_argument("negative variables");
     }
-    //wrong varibelse
-    if(Direction::Horizontal == direction && (length + column) > len_max) {
+    //wrong palce in notebook
+    int place = (length + column);
+    if(Direction::Horizontal == direction &&  place > len_max) {
         throw invalid_argument("out of column!");
     }
 
     if (direction == Direction::Horizontal){
-        if((column + length) > len_max){
+        if(place > len_max){
             throw invalid_argument("length out of line");
         }
         //add char to the str to read
-        for(int i = column ; i < (column + length); i++){
-            if(_maping[page][row][i] >= min_char && _maping[page][row][i] <= max_char){
-                str += _maping[page][row][i];
+        int until = (column + length);
+        for(int i = column ; i < until; i++){
+            char ch = _maping[page][row][i];
+            if(ch >= min_char && ch <= max_char){
+                str += ch;
             }
             else{
                 str += '_';
@@ -36,9 +39,11 @@ string ariel::Notebook:: read(int page, int row, int column,ariel::Direction dir
     }
     if (direction == Direction::Vertical){
          //add char to the str to read
-        for(int i = row ; i < (row + length); i++){
-            if(_maping[page][i][column] >= min_char && _maping[page][i][column] <= max_char){
-                str += _maping[page][i][column];
+         int until = (row + length);
+        for(int i = row ; i < until; i++){
+            char ch = _maping[page][i][column];
+            if(ch >= min_char && ch <= max_char){
+                str += ch;
             }
             else{
                 str += '_';
@@ -60,15 +65,19 @@ void ariel::Notebook::write(int page, int row, int column,ariel::Direction direc
     }
     //the char is illeagal
      for (int i = 0; i < len_word; ++i) {
-        if (str[(unsigned int)i] < min || str[(unsigned int)i] > max) {
+         char ch = str[(unsigned int)i];
+        if (ch < min || ch > max) {
             throw invalid_argument("The character is invalid");
         }
     }
     if (direction == Direction::Horizontal){
-        if(len_word + column > max_length){
+        int place = len_word + column;
+        if(place > max_length){
             throw invalid_argument("out of line-length");
         }
-        for(int i= column ; i < (column + len_word); i++){
+        int i = column;
+        int until = (column + len_word);
+        while(i < until){
             if(_maping[page][row][i] == '~'){
                 throw invalid_argument("deleted line");
             }
@@ -86,12 +95,14 @@ void ariel::Notebook::write(int page, int row, int column,ariel::Direction direc
                 int spot = i-column;
                 _maping[page][row][i] = str[(unsigned int)(spot)];
             }
+            i++;
         }
     }
 
     if (direction == Direction::Vertical){
-        
-        for(int i= row ; i < (row +len_word); i++){
+        int i = row;
+        int until = (row +len_word);
+        while(i < until){
             if(_maping[page][i][column] == '~'){
                 throw runtime_error("deleted line");
             }
@@ -108,6 +119,7 @@ void ariel::Notebook::write(int page, int row, int column,ariel::Direction direc
                 int spot = i-row;
                 _maping[page][i][column] = str[(unsigned int)(spot)];
             }
+            i++;
         }
     }
     
@@ -125,11 +137,13 @@ void ariel::Notebook:: erase(int page, int row, int column,ariel::Direction dire
             throw invalid_argument("invalliad column!");
     }
     if (direction == Direction::Horizontal){
-        if(length + column > len_max){
+        int place = length + column;
+        if(place > len_max){
             throw runtime_error("out of line-length");
         }
         int i = column;
-        while (i<(column + length))
+        int until = (column + length);
+        while (i< until)
         {
             _maping[page][row][i] = '~';
             i++;
@@ -138,7 +152,8 @@ void ariel::Notebook:: erase(int page, int row, int column,ariel::Direction dire
     }
     else{
         int i = row;
-        while (i<(row + length))
+        int until = (row + length);
+        while (i< until)
         {
             _maping[page][i][column] = '~';
             i++;
